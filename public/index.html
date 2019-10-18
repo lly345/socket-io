@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>Document</title>
+    </head>
+    <body>
+        欢迎进入聊天室
+        <!-- <button id="openIn">进入</button> -->
+        <div>
+            <ul id="list"></ul>
+            <input type="text" id="inp" />
+            <button id="btn">发送</button>
+        </div>
+    </body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // openIn.onclick = function() {
+        const oSocket = io("http://169.254.169.253:3000");
+
+        oSocket.on("message", obj => {
+            const { mesg, code, type, id } = obj;
+            if (!code) {
+                alert(mesg);
+                window.location.href = "http://baidu.com";
+                return;
+            }
+            switch (type) {
+                case "all":
+                    const li = document.createElement("li");
+                    li.innerHTML = id + ":" + mesg;
+                    list.appendChild(li);
+                    break;
+            }
+        });
+        btn.onclick = function() {
+            const val = inp.value.trim();
+            if (val) {
+                oSocket.send({
+                    code: 1,
+                    type: "all",
+                    content: val
+                });
+            }
+            inp.value = "";
+        };
+        // };
+    </script>
+</html>
